@@ -78,7 +78,7 @@ class BertModel(pl.LightningModule):
         test_predictions = torch.hstack([x['labels'] for x in outputs]).cpu().tolist()
 
         current_dir = Path(get_original_cwd())
-        sample_submission = pd.read_csv(current_dir / "data" / "sample_submission.csv").iloc[:50]
+        sample_submission = pd.read_csv(current_dir / "data" / "sample_submission.csv")
         sample_submission.prediction = test_predictions
 
         sample_submission.to_csv(current_dir / f"submission.csv", index=False)

@@ -20,7 +20,7 @@ def train(cfg: DictConfig):
 
     current_dir = Path(get_original_cwd())
     train_df = pd.read_csv(current_dir / "data" / "train.csv")
-    test_df = pd.read_csv(current_dir / "data" / "test.csv").iloc[:50]
+    test_df = pd.read_csv(current_dir / "data" / "test.csv")
 
     model = BertModel(cfg)
 
