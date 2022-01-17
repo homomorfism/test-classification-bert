@@ -4,6 +4,7 @@ models/
 logs/
 submission.csv
 .idea/
+outputs/
 ### Python template
 # Byte-compiled / optimized / DLL files
 __pycache__/

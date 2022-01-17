@@ -4,7 +4,6 @@ import pandas as pd
 import pytorch_lightning as pl
 import torch
 from easydict import EasyDict
-from hydra.utils import get_original_cwd
 from torchmetrics import Accuracy
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW
 
@@ -77,8 +76,9 @@ class BertModel(pl.LightningModule):
     def test_epoch_end(self, outputs) -> None:
         test_predictions = torch.hstack([x['labels'] for x in outputs]).cpu().tolist()
 
-        current_dir = Path(get_original_cwd())
-        sample_submission = pd.read_csv(current_dir / "data" / "sample_submission.csv")
+        data_dir = Path(self.cfg.data.data_dir)
+        current_dir = Path(self.cfg.data.current_dir)
+        sample_submission = pd.read_csv(data_dir / "sample_submission.csv")
         sample_submission.prediction = test_predictions
 
         sample_submission.to_csv(current_dir / f"submission.csv", index=False)

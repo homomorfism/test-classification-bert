@@ -4,7 +4,6 @@ import hydra
 import pandas as pd
 import pytorch_lightning as pl
 from easydict import EasyDict
-from hydra.utils import get_original_cwd
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
 
@@ -14,13 +13,13 @@ from src.model import BertModel
 pl.seed_everything(0)
 
 
-@hydra.main(config_path="configs", config_name="kaggle-gpu.yaml")
+@hydra.main(config_path="configs", config_name="test-env.yaml")
 def train(cfg: DictConfig):
     cfg = EasyDict(cfg)
 
-    current_dir = Path(get_original_cwd())
-    train_df = pd.read_csv(current_dir / "data" / "train.csv")
-    test_df = pd.read_csv(current_dir / "data" / "test.csv")
+    data_dir = Path(cfg.data.data_dir)
+    train_df = pd.read_csv(data_dir / "train.csv")
+    test_df = pd.read_csv(data_dir / "test.csv")
 
     model = BertModel(cfg)
 
@@ -31,7 +30,7 @@ def train(cfg: DictConfig):
         **cfg.data
     )
 
-    checkpointer = ModelCheckpoint(dirpath=current_dir / "models/",
+    checkpointer = ModelCheckpoint(dirpath=Path(cfg.data.current_dir) / "models",
                                    monitor="val/loss_epoch",
                                    mode="min",
                                    save_weights_only=True,

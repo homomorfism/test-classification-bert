@@ -86,7 +86,8 @@ class ClassificationDataLoader(pl.LightningDataModule):
                  max_len: int,
                  val_size: float,
                  batch_size: int,
-                 num_workers: int):
+                 num_workers: int,
+                 **kwargs):
         super().__init__()
         num_val_samples = int(len(train_df) * val_size)
         num_train_samples = len(train_df) - num_val_samples
