@@ -3,6 +3,7 @@ from pathlib import Path
 import hydra
 import pandas as pd
 import pytorch_lightning as pl
+import wandb
 from easydict import EasyDict
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
@@ -59,6 +60,7 @@ def train(cfg: DictConfig):
 
     trainer.fit(model, dataloader.train_dataloader(), dataloader.val_dataloader())
     trainer.test(model, dataloader.test_dataloader())
+    wandb.finish()
 
 
 if __name__ == '__main__':
