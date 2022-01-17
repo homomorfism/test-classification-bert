@@ -10,6 +10,6 @@ data:
   num_workers: 2
   val_size: 0.05
   data_dir: '/kaggle/input/contradictory-my-dear-watson'
-  working_dir: "/kaggle/output"
+  current_dir: "/kaggle/output"
 
 gpus: 1
