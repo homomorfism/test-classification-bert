@@ -1,0 +1,12 @@
+transformers
+kaggle
+sentencepiece
+pandas
+numpy
+matplotlib
+seaborn
+pytorch-lightning
+torchmetrics
+torch
+easydict
+hydra-core
