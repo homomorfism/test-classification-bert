@@ -1,6 +1,6 @@
 model:
   lr: 1e-5
-  num_epochs: 0
+  num_epochs: 5
   model_type: 'bert-base-multilingual-uncased'
 
 
