@@ -38,6 +38,8 @@ def train(cfg: DictConfig):
                          project="contradictory-my-dear-watson",
                          config=cfg)
 
+    logger.watch(model, log_freq=1000)
+
     checkpointer = ModelCheckpoint(dirpath=current_dir / "models",
                                    monitor="val/loss_epoch",
                                    mode="min",
