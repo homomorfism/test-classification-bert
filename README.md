@@ -7,7 +7,7 @@ Userful links:
 Start training on kaggle machine:
 
 ```bash
-! if cd text-classification-bert; then git pull; else https://github.com/homomorfism/text-classification-bert.git; fi
+! git clone https://github.com/homomorfism/text-classification-bert.git || (cd text-classification-bert ; git pull)
 ! pip install -qqq -r text-classification-bert/requirements.txt
 ! cd text-classification-bert && python train.py
 ```
