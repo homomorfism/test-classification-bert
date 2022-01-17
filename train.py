@@ -35,7 +35,6 @@ def train(cfg: DictConfig):
     logger = WandbLogger(name="baseline_bert",
                          save_dir=str(current_dir / "logs"),
                          log_model=True,
-                         experiment="Five epochs",
                          project="contradictory-my-dear-watson",
                          config=cfg)
 
