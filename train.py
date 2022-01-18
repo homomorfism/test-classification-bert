@@ -16,7 +16,7 @@ from src.model import BertModel
 pl.seed_everything(0)
 
 
-@hydra.main(config_path="configs", config_name="test-env")
+@hydra.main(config_path="configs", config_name="kaggle-gpu")
 def train(cfg: DictConfig):
     cfg = EasyDict(cfg)
 
