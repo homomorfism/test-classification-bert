@@ -10,3 +10,4 @@ torchmetrics
 torch
 easydict
 hydra-core
+scikit-learn

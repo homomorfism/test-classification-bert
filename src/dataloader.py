@@ -1,7 +1,7 @@
 import pandas as pd
 import pytorch_lightning as pl
 import torch
-from torch.utils.data import Dataset, DataLoader, random_split
+from torch.utils.data import Dataset, DataLoader
 
 
 class ClassificationDataset(Dataset):
@@ -81,24 +81,19 @@ class ClassificationTestDataset(Dataset):
 class ClassificationDataLoader(pl.LightningDataModule):
     def __init__(self,
                  train_df: pd.DataFrame,
+                 val_df: pd.DataFrame,
                  test_df: pd.DataFrame,
                  tokenizer,
                  max_len: int,
-                 val_size: float,
                  batch_size: int,
                  num_workers: int,
                  **kwargs):
         super().__init__()
-        num_val_samples = int(len(train_df) * val_size)
-        num_train_samples = len(train_df) - num_val_samples
 
-        self.train_dataset, self.val_dataset = random_split(
-            ClassificationDataset(df=train_df, tokenizer=tokenizer, max_length=max_len),
-            lengths=[num_train_samples, num_val_samples],
-            generator=torch.Generator().manual_seed(0)
-        )
-
+        self.train_dataset = ClassificationDataset(df=train_df, tokenizer=tokenizer, max_length=max_len)
+        self.val_dataset = ClassificationDataset(df=val_df, tokenizer=tokenizer, max_length=max_len)
         self.test_dataset = ClassificationTestDataset(df=test_df, tokenizer=tokenizer, max_length=max_len)
+
         self.batch_size = batch_size
         self.num_workers = num_workers
 

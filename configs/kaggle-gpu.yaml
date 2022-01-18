@@ -13,3 +13,4 @@ data:
   current_dir: "/kaggle/working"
 
 gpus: 1
+exp_name: "undefined"

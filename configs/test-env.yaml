@@ -1,6 +1,6 @@
 model:
   lr: 1e-5
-  num_epochs: 1
+  num_epochs: 0
   model_type: 'bert-base-multilingual-uncased'
 
 
@@ -13,3 +13,4 @@ data:
   current_dir: "../../.."
 
 gpus: 0
+exp_name: "undefined"
