@@ -46,8 +46,8 @@ def train_model(cfg: DictConfig,
     model = BertModel(cfg)
 
     dataloader = ClassificationDataLoader(
-        train_df=train_data,
-        val_df=val_data,
+        train_df=train_data.reset_index(drop=True),
+        val_df=val_data.reset_index(drop=True),
         test_df=test_data,
         tokenizer=model.tokenizer,
         **cfg.data
