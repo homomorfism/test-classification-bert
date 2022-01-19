@@ -62,7 +62,7 @@ def train_model(cfg: DictConfig,
                          config=cfg)
 
     checkpointer = ModelCheckpoint(dirpath=current_dir / "models",
-                                   monitor="val/loss_epoch",
+                                   monitor="val/acc_epoch",
                                    mode="min",
                                    save_weights_only=True,
                                    save_top_k=1,
