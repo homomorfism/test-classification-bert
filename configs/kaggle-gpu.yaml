@@ -1,16 +1,14 @@
-model:
-  lr: 1e-5
-  num_epochs: 5
-  model_type: 'bert-base-multilingual-uncased'
+lr: 1e-5
+num_epochs: 5
+model_type: 'bert-base-multilingual-uncased'
 
 
-data:
-  max_len: 256
-  batch_size: 32
-  num_workers: 2
-  val_size: 0.05
-  data_dir: '/kaggle/input/contradictory-my-dear-watson'
-  current_dir: "/kaggle/working"
+
+max_len: 256
+batch_size: 32
+num_workers: 2
+data_dir: '/kaggle/input/contradictory-my-dear-watson'
+current_dir: "/kaggle/working"
 
 gpus: 1
 exp_name: "undefined"

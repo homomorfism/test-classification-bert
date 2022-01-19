@@ -14,13 +14,13 @@ class BertModel(pl.LightningModule):
         super().__init__()
 
         self.model = BertForSequenceClassification.from_pretrained(
-            cfg.model.model_type,
+            cfg.model_type,
             num_labels=3,
             output_attentions=False,
             output_hidden_states=False
         )
 
-        self.tokenizer = BertTokenizer.from_pretrained(cfg.model.model_type, do_lower_case=True)
+        self.tokenizer = BertTokenizer.from_pretrained(cfg.model_type, do_lower_case=True)
         self.cfg = cfg
         self.train_acc = Accuracy()
         self.val_acc = Accuracy()
@@ -78,8 +78,8 @@ class BertModel(pl.LightningModule):
     def test_epoch_end(self, outputs) -> None:
         test_predictions = torch.hstack([x['labels'] for x in outputs]).cpu().tolist()
 
-        data_dir = Path(self.cfg.data.data_dir)
-        current_dir = Path(self.cfg.data.current_dir)
+        data_dir = Path(self.cfg.data_dir)
+        current_dir = Path(self.cfg.current_dir)
         sample_submission = pd.read_csv(data_dir / "sample_submission.csv")
         sample_submission.prediction = test_predictions
 
@@ -87,8 +87,8 @@ class BertModel(pl.LightningModule):
         print("Submission created!")
 
     def configure_optimizers(self):
-        optimizer = AdamW(self.model.parameters(), lr=self.cfg.model.lr, eps=1e-8)
+        optimizer = AdamW(self.model.parameters(), lr=self.cfg.lr, eps=1e-8)
         scheduler = get_linear_schedule_with_warmup(optimizer,
                                                     num_warmup_steps=3,
-                                                    num_training_steps=self.cfg.model.num_epochs)
+                                                    num_training_steps=self.cfg.num_epochs)
         return [optimizer], [scheduler]

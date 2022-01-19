@@ -3,25 +3,25 @@ from pathlib import Path
 import hydra
 import pandas as pd
 import pytorch_lightning as pl
+import wandb
 from easydict import EasyDict
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from sklearn.model_selection import KFold
 
-import wandb
 from src.dataloader import ClassificationDataLoader
 from src.model import BertModel
 
 pl.seed_everything(0)
 
 
-@hydra.main(config_path="configs", config_name="kaggle-gpu")
+@hydra.main(config_path="configs", config_name="test-env")
 def train(cfg: DictConfig):
     cfg = EasyDict(cfg)
 
-    data_dir = Path(cfg.data.data_dir)
-    current_dir = Path(cfg.data.current_dir)
+    data_dir = Path(cfg.data_dir)
+    current_dir = Path(cfg.current_dir)
     train_df = pd.read_csv(data_dir / "train.csv")
     test_df = pd.read_csv(data_dir / "test.csv")
 
@@ -51,10 +51,10 @@ def train_model(cfg: DictConfig,
         val_df=val_data.reset_index(drop=True),
         test_df=test_data,
         tokenizer=model.tokenizer,
-        **cfg.data
+        **cfg
     )
 
-    current_dir = Path(cfg.data.current_dir)
+    current_dir = Path(cfg.current_dir)
     logger = WandbLogger(name=cfg.exp_name + f"_fold={fold_index}",
                          save_dir=str(current_dir / "logs"),
                          log_model='all',
@@ -74,7 +74,7 @@ def train_model(cfg: DictConfig,
         logger=logger,
         callbacks=[checkpointer, lr_scheduler],
         gpus=cfg.gpus,
-        max_epochs=cfg.model.num_epochs,
+        max_epochs=cfg.num_epochs,
         default_root_dir=str(current_dir / "logs"),
         # limit_train_batches=2,
         # limit_val_batches=2,

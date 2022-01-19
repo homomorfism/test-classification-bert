@@ -1,16 +1,14 @@
-model:
-  lr: 1e-5
-  num_epochs: 0
-  model_type: 'bert-base-multilingual-uncased'
+lr: 1e-5
+num_epochs: 0
+model_type: 'bert-base-multilingual-uncased'
 
 
-data:
-  max_len: 256
-  batch_size: 2
-  num_workers: 2
-  val_size: 0.1
-  data_dir: "../../../data"
-  current_dir: "../../.."
+
+max_len: 256
+batch_size: 2
+num_workers: 2
+data_dir: "../../../data"
+current_dir: "../../.."
 
 gpus: 0
 exp_name: "undefined"
