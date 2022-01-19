@@ -35,6 +35,7 @@ def train(cfg: DictConfig):
 
     final_submission = most_frequent_prediction(predictions)
     final_submission.to_csv(current_dir / "submission.csv", index=False)
+    wandb.save(current_dir / "submission.csv")
     print("training is finished!")
 
 
@@ -65,7 +66,7 @@ def train_model(cfg: DictConfig,
                                    mode="min",
                                    save_weights_only=True,
                                    save_top_k=1,
-                                   filename=r"bert_{epoch}-{val_loss_epoch:.02f}_fold=" + str(fold_index))
+                                   filename=r"bert_{epoch}-{val_acc_epoch:.02f}_fold=" + str(fold_index))
 
     trainer = pl.Trainer(
         logger=logger,
@@ -78,6 +79,8 @@ def train_model(cfg: DictConfig,
     )
 
     trainer.fit(model, dataloader.train_dataloader(), dataloader.val_dataloader())
+
+    # This will generate predictions for test.csv and save them to submission.csv file
     trainer.test(model, dataloader.test_dataloader())
     wandb.finish()
 

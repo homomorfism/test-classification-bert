@@ -14,9 +14,12 @@ Start training on kaggle machine:
 
 Need to implement:
 
-- cross validation with 5-6 folds
 - add lr schedulers
 - augmentations (e.x. [augmentation with translation]())
+
+Implemented:
+
+- cross validation with 5 folds
 
 Observation logs from experiments:
 

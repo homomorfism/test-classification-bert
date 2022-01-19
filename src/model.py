@@ -57,10 +57,11 @@ class BertModel(pl.LightningModule):
     def validation_epoch_end(self, outputs) -> None:
         avg_loss = torch.hstack([loss['loss'] for loss in outputs]).mean()
         self.log("val/loss_epoch", avg_loss.item())
-        self.log("val/acc_epoch", self.val_acc.compute())
+        val_acc = self.val_acc.compute()
+        self.log("val/acc_epoch", val_acc.item())
 
         # That's for ModelCheckpointer, do not change
-        self.log("val_loss_epoch", avg_loss.item(), logger=False)
+        self.log("val_acc_epoch", val_acc.item(), logger=False)
 
     def test_step(self, batch, batch_idx):
         input_ids, input_masks, token_type_ids = batch
