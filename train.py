@@ -35,7 +35,14 @@ def train(cfg: DictConfig):
 
     final_submission = most_frequent_prediction(predictions)
     final_submission.to_csv(current_dir / "submission.csv", index=False)
+
+    # Saving merged final predictions to wandb
+    wandb.init(project="contradictory-my-dear-watson",
+               group=cfg.exp_name,
+               job_type="save final prediction")
     wandb.save(current_dir / "submission.csv")
+    wandb.finish()
+
     print("training is finished!")
 
 
@@ -55,10 +62,12 @@ def train_model(cfg: DictConfig,
     )
 
     current_dir = Path(cfg.current_dir)
-    logger = WandbLogger(name=cfg.exp_name + f"_fold={fold_index}",
+    logger = WandbLogger(project="contradictory-my-dear-watson",
+                         group=cfg.exp_name,
+                         job_type="k-fold training",
+                         name=f"fold={fold_index}",
                          save_dir=str(current_dir / "logs"),
                          log_model='all',
-                         project="contradictory-my-dear-watson",
                          config=cfg)
 
     checkpointer = ModelCheckpoint(dirpath=current_dir / "models",
