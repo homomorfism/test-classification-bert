@@ -3,20 +3,20 @@ from pathlib import Path
 import hydra
 import pandas as pd
 import pytorch_lightning as pl
-import wandb
 from easydict import EasyDict
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from sklearn.model_selection import KFold
 
+import wandb
 from src.dataloader import ClassificationDataLoader
 from src.model import BertModel
 
 pl.seed_everything(0)
 
 
-@hydra.main(config_path="configs", config_name="test-env")
+@hydra.main(config_path="configs", config_name="kaggle-gpu")
 def train(cfg: DictConfig):
     cfg = EasyDict(cfg)
 
