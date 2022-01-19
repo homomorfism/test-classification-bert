@@ -6,6 +6,7 @@ import torch
 from easydict import EasyDict
 from torchmetrics import Accuracy
 from transformers import BertTokenizer, BertForSequenceClassification, AdamW
+from transformers import get_linear_schedule_with_warmup
 
 
 class BertModel(pl.LightningModule):
@@ -86,4 +87,8 @@ class BertModel(pl.LightningModule):
         print("Submission created!")
 
     def configure_optimizers(self):
-        return AdamW(self.model.parameters(), lr=self.cfg.model.lr, eps=1e-8)
+        optimizer = AdamW(self.model.parameters(), lr=self.cfg.model.lr, eps=1e-8)
+        scheduler = get_linear_schedule_with_warmup(optimizer,
+                                                    num_warmup_steps=3,
+                                                    num_training_steps=self.cfg.model.num_epochs)
+        return [optimizer], [scheduler]

@@ -3,13 +3,13 @@ from pathlib import Path
 import hydra
 import pandas as pd
 import pytorch_lightning as pl
-import wandb
 from easydict import EasyDict
 from omegaconf import DictConfig
-from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import WandbLogger
 from sklearn.model_selection import KFold
 
+import wandb
 from src.dataloader import ClassificationDataLoader
 from src.model import BertModel
 
@@ -68,9 +68,11 @@ def train_model(cfg: DictConfig,
                                    save_top_k=1,
                                    filename=r"bert_{epoch}-{val_acc_epoch:.02f}_fold=" + str(fold_index))
 
+    lr_scheduler = LearningRateMonitor(logging_interval='step')
+
     trainer = pl.Trainer(
         logger=logger,
-        callbacks=[checkpointer],
+        callbacks=[checkpointer, lr_scheduler],
         gpus=cfg.gpus,
         max_epochs=cfg.model.num_epochs,
         default_root_dir=str(current_dir / "logs"),
