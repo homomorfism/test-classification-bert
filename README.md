@@ -14,7 +14,7 @@ Start training on kaggle machine:
 
 Need to implement:
 
-- ~~cross validation with 5-6 folds~~ - uptime for competition is 120 min
+- cross validation with 5-6 folds
 - add lr schedulers
 - augmentations (e.x. [augmentation with translation]())
 
@@ -24,5 +24,4 @@ Observation logs from experiments:
 
 Training logs:
 
-- 18.01.2022:
-  - 9 epochs, final accuracy 0.64485
+- 18.01.2022 - 9 epochs, final accuracy 0.64485

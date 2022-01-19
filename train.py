@@ -8,7 +8,7 @@ from easydict import EasyDict
 from omegaconf import DictConfig
 from pytorch_lightning.callbacks import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 
 from src.dataloader import ClassificationDataLoader
 from src.model import BertModel
@@ -21,19 +21,28 @@ def train(cfg: DictConfig):
     cfg = EasyDict(cfg)
 
     data_dir = Path(cfg.data.data_dir)
+    current_dir = Path(cfg.data.current_dir)
     train_df = pd.read_csv(data_dir / "train.csv")
     test_df = pd.read_csv(data_dir / "test.csv")
 
-    train_data, val_data = train_test_split(train_df, test_size=cfg.data.val_size)
-    train_model(cfg, train_data, val_data, test_df)
+    folds = KFold(n_splits=5)
 
+    predictions = []
+    for ii, (train_indices, val_indices) in enumerate(folds.split(train_df)):
+        train_data, val_data = train_df.iloc[train_indices], train_df.iloc[val_indices]
+        test_predictions = train_model(cfg, train_data, val_data, test_df, fold_index=ii)
+        predictions.append(test_predictions)
+
+    final_submission = most_frequent_prediction(predictions)
+    final_submission.to_csv(current_dir / "submission.csv", index=False)
     print("training is finished!")
 
 
 def train_model(cfg: DictConfig,
                 train_data: pd.DataFrame,
                 val_data: pd.DataFrame,
-                test_data: pd.DataFrame):
+                test_data: pd.DataFrame,
+                fold_index: int):
     model = BertModel(cfg)
 
     dataloader = ClassificationDataLoader(
@@ -45,7 +54,7 @@ def train_model(cfg: DictConfig,
     )
 
     current_dir = Path(cfg.data.current_dir)
-    logger = WandbLogger(name=cfg.exp_name,
+    logger = WandbLogger(name=cfg.exp_name + f"_fold={fold_index}",
                          save_dir=str(current_dir / "logs"),
                          log_model='all',
                          project="contradictory-my-dear-watson",
@@ -56,7 +65,7 @@ def train_model(cfg: DictConfig,
                                    mode="min",
                                    save_weights_only=True,
                                    save_top_k=1,
-                                   filename=r"bert_{epoch}-{val_loss_epoch:.02f}_fold=")
+                                   filename=r"bert_{epoch}-{val_loss_epoch:.02f}_fold=" + str(fold_index))
 
     trainer = pl.Trainer(
         logger=logger,
@@ -71,6 +80,23 @@ def train_model(cfg: DictConfig,
     trainer.fit(model, dataloader.train_dataloader(), dataloader.val_dataloader())
     trainer.test(model, dataloader.test_dataloader())
     wandb.finish()
+
+    fold_submission = pd.read_csv(current_dir / "submission.csv")
+    return fold_submission
+
+
+def most_frequent_prediction(fold_submissions: list) -> pd.DataFrame:
+    sample_submission = fold_submissions[0].copy()
+
+    results = {}
+    for ii, df in enumerate(fold_submissions):
+        results[ii] = df.prediction.to_list()
+
+    # Returns most frequent values from each fold
+    prediction = pd.DataFrame(results).mode(axis=1)[0].astype("int").to_list()
+    sample_submission.prediction = prediction
+
+    return sample_submission
 
 
 if __name__ == '__main__':
